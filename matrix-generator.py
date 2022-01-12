@@ -1,7 +1,13 @@
 import numpy as np
+<<<<<<< HEAD
 import pandas as pd
 
 N = 40
+=======
+
+
+N = 20
+>>>>>>> 49c87ff (first commit)
 #M = np.random.randint(0,2,(n,n))
 #symm = M@M.T
 # test for symmetry
@@ -21,6 +27,7 @@ N = 40
 from random import randint
 import random
 
+<<<<<<< HEAD
 # sparse = np.zeros((N,N))
 # for _ in range(N + int(N/2)):
 #     (i,j) = (randint(0,N-1),randint(0,N-1))
@@ -45,4 +52,17 @@ a = np.matrix(a)
 print(a)
 with open('input2.txt', 'w') as f:
     for line in a:
+=======
+sparse = np.zeros((N,N))
+for _ in range(N*2):
+    (i,j) = (randint(0,N-1),randint(0,N-1))
+    x = 1
+    sparse[i][j] = x
+    sparse[j][i] = x
+
+print(sparse)
+mat = np.matrix(sparse)
+with open('input.txt', 'w') as f:
+    for line in mat:
+>>>>>>> 49c87ff (first commit)
         np.savetxt(f, line, fmt='%.d')
