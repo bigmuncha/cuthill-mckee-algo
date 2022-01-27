@@ -6,8 +6,12 @@ N = 40
 =======
 
 
+<<<<<<< HEAD
 N = 20
 >>>>>>> 49c87ff (first commit)
+=======
+N = 10
+>>>>>>> 63d2a33 (Working)
 #M = np.random.randint(0,2,(n,n))
 #symm = M@M.T
 # test for symmetry
