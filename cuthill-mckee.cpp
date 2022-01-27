@@ -27,6 +27,22 @@ ostream& operator<<(ostream& out, vector<T> const& v)
     return out;
 }
 
+template <class T>
+concept pair_if =
+    requires(T a){
+    a.begin()->first;
+    a.end()->second;
+};
+
+template <pair_if T>
+void printer(const T& container)
+{
+    for(auto&& [a,b] : container){
+	std::cout << a << " " << b <<'\n';
+    }
+}
+
+
 class ReorderingSSM {
 private:
     vector<vector<double> > _matrix;
@@ -75,6 +91,7 @@ public:
         for (int i = 0; i < degrees.size(); i++)
             notVisited.push_back(make_pair(i, degrees[i]));
 
+	printer(notVisited);
         // Vector notVisited helps in running BFS
         // even when there are dijoind graphs
         while (notVisited.size()) {
@@ -91,6 +108,7 @@ public:
                                     + findIndex(notVisited,
                                                 notVisited[Q.front()].first));
 
+	    
             // Simple BFS
             while (!Q.empty()) {
 

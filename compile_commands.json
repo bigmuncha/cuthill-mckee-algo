@@ -1,0 +1,16 @@
+[
+  {
+    "arguments": [
+      "/usr/lib/llvm-13/bin/clang",
+      "-c",
+      "-std=c++20",
+      "-I./",
+      "-o",
+      "final_alg",
+      "final_alg.cpp"
+    ],
+    "directory": "/home/omar/kurs",
+    "file": "/home/omar/kurs/final_alg.cpp",
+    "output": "/home/omar/kurs/final_alg.o"
+  }
+]
