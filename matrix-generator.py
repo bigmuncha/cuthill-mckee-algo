@@ -1,7 +1,7 @@
 import numpy as np
 
 
-N = 20
+N = 10
 #M = np.random.randint(0,2,(n,n))
 #symm = M@M.T
 # test for symmetry
