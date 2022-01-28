@@ -1,7 +1,7 @@
 import numpy as np
 
 
-N = 10
+N = 30
 #M = np.random.randint(0,2,(n,n))
 #symm = M@M.T
 # test for symmetry
@@ -22,7 +22,7 @@ from random import randint
 import random
 
 sparse = np.zeros((N,N))
-for _ in range(N*2):
+for _ in range(N*2*2):
     (i,j) = (randint(0,N-1),randint(0,N-1))
     x = 1
     sparse[i][j] = x
