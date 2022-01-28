@@ -7,6 +7,7 @@
 #include <queue>
 #include <map>
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "colors.hpp"
 #include <algorithm>
 #include <iomanip>
@@ -57,6 +58,11 @@ ostream& operator<<(ostream& out, vector<vector<T>> const& v)
     return out;
 }
 >>>>>>> 63d2a33 (Working)
+=======
+#include "colors.hpp"
+
+using namespace std;
+>>>>>>> 39beca4 (add color, remove OOP)
 
 template <class T>
 concept container =
@@ -194,11 +200,73 @@ int get_matrix_wide(vector<vector<T>> matrix)
 =======
     for(int i =0; i < cont.size(); i++){
 	std::cout <<i<<": ";
-	for(auto &b :cont[i] )
-	    std::cout << b <<" ";
-	std::cout <<'\n';
+	for(auto &b :cont[i] ){
+	    if(b != 0)
+		std::cout<<BOLD(FRED("1 "));
+	    else
+		std::cout<<"O ";
+	}
+	//     std::cout << b <<" ";
+	 std::cout <<'\n';
     }
 }
+
+// template <typename T>
+// class my_vect : public std::vector<T>
+// {
+// public:
+//     int degree;
+// };
+
+// inline std::map<unsigned,my_vect<int>> create_map_smej(const std::vector<std::vector<int>>& matr)
+// {
+//     std::map<unsigned,my_vect<int>> res;
+//     for(int i=0; i < matr.size(); i++)
+//     {
+// 	my_vect<int> temp;
+// 	for(int j =0; j < matr[i].size(); j++)
+// 	{
+// 	    if(matr[i][j] == 1){
+// 		temp.push_back(j);
+// 	    }
+// 	}
+// 	res[i] = temp;
+//     }
+//     return res;
+// }
+
+template <typename T>
+ostream& operator<<(ostream& out, vector<T> const& v)
+{
+    for(auto &a: v)
+	out<< a <<' ';
+    return out;
+}
+
+using namespace std;
+template <typename T>
+vector<vector<T>> fileIn( const char* filename )
+{
+   vector< vector<T> > arr;
+   ifstream in( filename );
+   if ( in )
+   {
+      for ( string line; getline( in, line ); )
+      {
+	  stringstream ss( line );
+	  vector<int> row;
+	  for ( int i; ss >> i; )
+	      row.push_back( i );
+	  arr.push_back( row );
+      }
+   }
+   else
+   {
+      cerr << "Boo! No such file\n";
+   }
+   return arr;
+}
+
 
 inline std::vector<std::vector<int>> create_list_smej(const std::vector<std::vector<int>>& matr)
 {
@@ -213,30 +281,6 @@ inline std::vector<std::vector<int>> create_list_smej(const std::vector<std::vec
 	    }
 	}
 	res.push_back(temp);
-    }
-    return res;
-}
-
-template <typename T>
-class my_vect : public std::vector<T>
-{
-public:
-    int degree;
-};
-
-inline std::map<unsigned,my_vect<int>> create_map_smej(const std::vector<std::vector<int>>& matr)
-{
-    std::map<unsigned,my_vect<int>> res;
-    for(int i=0; i < matr.size(); i++)
-    {
-	my_vect<int> temp;
-	for(int j =0; j < matr[i].size(); j++)
-	{
-	    if(matr[i][j] == 1){
-		temp.push_back(j);
-	    }
-	}
-	res[i] = temp;
     }
     return res;
 >>>>>>> 63d2a33 (Working)

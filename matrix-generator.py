@@ -5,6 +5,7 @@ import pandas as pd
 N = 40
 =======
 
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 N = 20
@@ -12,6 +13,9 @@ N = 20
 =======
 N = 10
 >>>>>>> 63d2a33 (Working)
+=======
+N = 30
+>>>>>>> 39beca4 (add color, remove OOP)
 #M = np.random.randint(0,2,(n,n))
 #symm = M@M.T
 # test for symmetry
@@ -58,7 +62,7 @@ with open('input2.txt', 'w') as f:
     for line in a:
 =======
 sparse = np.zeros((N,N))
-for _ in range(N*2):
+for _ in range(N*2*2):
     (i,j) = (randint(0,N-1),randint(0,N-1))
     x = 1
     sparse[i][j] = x
