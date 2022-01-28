@@ -1,4 +1,7 @@
 * How it work:
-  $python matrix-generator.py
-  $make -f Makefile.mk
-  $./final_alg
+** 
+   $python matrix-generator.py
+** 
+   $make -f Makefile.mk
+** 
+   $./final_alg
