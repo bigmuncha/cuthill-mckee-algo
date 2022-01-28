@@ -1,4 +1,4 @@
 * How it work:
   1. $ python matrix-generator.py
   2. $ make -f Makefile.mk
-  3. $ ./final_alg
+  3. $ ./final_alg input.txt

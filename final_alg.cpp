@@ -7,41 +7,68 @@
 #include <algorithm>
 #include <ranges>
 
-class vertex
+//создаю список смежностей из матрицы
+inline std::vector<std::vector<int>> create_list_smej(const std::vector<std::vector<int>>& matr)
 {
-    public:
-    int degree;
-    std::vector<std::shared_ptr<vertex>> neigbords;
-    std::vector<int> neig_index;
-    unsigned index;
-    unsigned new_index;
-    std::vector<int> new_neig_index;
-    vertex(int i, std::vector<std::shared_ptr<vertex>> n, std::vector<int> l, unsigned inddex,unsigned new_index,std::vector<int> new_neig)
+    std::vector<std::vector<int>> res;
+    for(int i=0; i < matr.size(); i++)
+    {
+	std::vector<int> temp;
+	for(int j =0; j < matr[i].size(); j++)
+	{
+	    if(matr[i][j] == 1){
+		temp.push_back(j);
+	    }
+	}
+	res.push_back(temp);
+    }
+    return res;
+}
+
+class vertex;
+//typedef для удобной работы
+typedef std::shared_ptr<vertex> vertex_SPtr; //указатель на вершину
+
+template<class T>
+using plain_array = std::vector<T>;
+
+//структура для вершины
+struct vertex
+{
+    int degree; //степень
+    plain_array<vertex_SPtr> neigbords; //массив указателей на соседей
+    plain_array<int> neig_index; // массив индексов соседей
+    unsigned index; //начальный индекс
+    unsigned new_index; // индекс после работы алгоритма
+    plain_array<int> new_neig_index; // новый список соседей
+
+    vertex(int i, plain_array<vertex_SPtr> n, plain_array<int> l, unsigned inddex,unsigned new_index,plain_array<int> new_neig)
 	:degree(i),neigbords(n),neig_index(l),index(inddex),new_index(new_index),new_neig_index(new_neig) {}
 };
 
-typedef std::shared_ptr<vertex> vertex_sp;
 
-std::vector<vertex_sp> create_vertex_array (const std::vector<std::vector<int>> &list_smej)
+//создаю список указателей на вершины из списка смежностей 
+plain_array<vertex_SPtr> create_vertex_array (const plain_array<plain_array<int>> &list_smej)
 {
-    std::vector<vertex_sp> map_vert;
+    plain_array<vertex_SPtr> map_vert;
     for(int i =0;i < list_smej.size(); i++)
     {
-	vertex omar(list_smej[i].size(),std::vector<vertex_sp>(),list_smej[i],i,0,std::vector<int>());
+	vertex omar(list_smej[i].size(),plain_array<vertex_SPtr>(),list_smej[i],i,0,plain_array<int>());
 	map_vert.push_back(std::make_shared<vertex>(omar));
     }
     for(int i = 0; i< list_smej.size(); i++){
-	map_vert[i]->neigbords = [&map_vert](std::vector<int> vect_ind) ->std::vector<vertex_sp>{
-		std::vector<vertex_sp> ret;
+	map_vert[i]->neigbords = [&map_vert](plain_array<int> vect_ind) ->plain_array<vertex_SPtr>{
+		plain_array<vertex_SPtr> ret;
 		for(auto &a:vect_ind){ ret.push_back(map_vert[a]);}
 		return ret;}(map_vert[i]->neig_index);
     }
     return map_vert;
 }
 
-int get_min_degree(const std::vector<vertex_sp>& vert_list)
+// достать индекс вершины с минимальной степенью
+int get_min_degree(const plain_array<vertex_SPtr>& vert_list)
 {
-    int current = 1000;
+    int current = 100000;  //предположу, что так много вершин не будет
     int index = 0;
     for(auto& a:vert_list){
 	if(a->degree < current){
@@ -52,53 +79,56 @@ int get_min_degree(const std::vector<vertex_sp>& vert_list)
     return  index;
 }
 
-vertex_sp get_vertex_by_index(const int index,const std::vector<vertex_sp> vert_list){
+// достать вершину по индексу O(n)- долго при большом количестве вершин, можно использовать другой контейнер
+vertex_SPtr get_vertex_by_index(const int index,const plain_array<vertex_SPtr> vert_list){
     for(auto &a:vert_list)
 	if(a->index == index)
 	    return a;
     return nullptr;
 }
 
-std::vector<vertex_sp> sort_vert_list_by_degree(std::vector<vertex_sp> vert_list){
+//сортировка массива с вершинами по степени, для более удобного перебора
+plain_array<vertex_SPtr> sort_vert_list_by_degree(plain_array<vertex_SPtr> vert_list){
 	std::sort(vert_list.begin(),vert_list.end(),
 		  [&vert_list]
-		  (vertex_sp i, vertex_sp j){
+		  (vertex_SPtr i, vertex_SPtr j){
 		      return i->degree < j->degree;
 		  });
 	return  vert_list;
 }
 
-void cuthill_mckee_algo(std::vector<vertex_sp>& vert_list){
-    int current_ind = get_min_degree(vert_list);
+//основной алгоритм
+void cuthill_mckee_algo(plain_array<vertex_SPtr>& vert_list){
+    int current_ind = get_min_degree(vert_list); // берем индекс минимальной вершины
     std::cout <<"in cuthill mccke"<< current_ind <<"\n";
-    std::set<int> pomech ={current_ind};
-    std::queue<vertex_sp> inqueue;
-    auto current_vert = get_vertex_by_index(current_ind,vert_list);
+    std::set<int> pomech ={current_ind}; // кладем ее в набор помеченных вершин(мы там были)
+    std::queue<vertex_SPtr> inqueue; // очередь с вершинами, которые мы должны посетить
+    auto current_vert = get_vertex_by_index(current_ind,vert_list); // достаем вершину с минимальной степенью
     if(current_vert == nullptr){
 	std::cerr <<"Bad vertex\n";
 	return ;
     }
-    inqueue.push(current_vert);
-    current_vert->new_index = 0;
+    inqueue.push(current_vert); // кладем ее в очередь
+    current_vert->new_index = 0; // устанавлимаем ее индекс в 0;
     int i = 1;
     while(!inqueue.empty())
     {
-	current_vert = inqueue.front();
-	inqueue.pop();
-	auto sort_vertex_list = sort_vert_list_by_degree(current_vert->neigbords);
-	for(auto& a: sort_vertex_list){
+	current_vert = inqueue.front(); //достаем вершину из очереди
+	inqueue.pop(); 
+	auto sort_vertex_list = sort_vert_list_by_degree(current_vert->neigbords); // сортируем список соседей в текущей вершине
+	for(auto& a: sort_vertex_list){ //идем по всем соседям
 	    if(pomech.contains(a->index)){
-		continue;
+		continue; //пропускаем помеченные
 	    }else{
-		inqueue.push(a);
-		pomech.insert(a->index);
-		a->new_index = i++;
+		inqueue.push(a); // кладем в очередь не помеченные 
+		pomech.insert(a->index); 
+		a->new_index = i++; // увеличиваем текущий индекс
 	    }
 	}
     }
 
     for(int i=0; i < vert_list.size(); i++){
-	std::vector<int> new_neig;
+	plain_array<int> new_neig; // создаем для каждой вершины новый список соседей
 	for(auto &a:vert_list[i]->neig_index){
 	    auto cur = get_vertex_by_index(a, vert_list);
 	    vert_list[i]->new_neig_index.push_back(cur->new_index);
@@ -106,9 +136,10 @@ void cuthill_mckee_algo(std::vector<vertex_sp>& vert_list){
     }
 }
 
-std::vector<std::vector<int>> get_matrix(const std::vector<vertex_sp>& vert_list)
+// создаем матрицу из списка смежностей вершин
+plain_array<plain_array<int>> get_matrix(const plain_array<vertex_SPtr>& vert_list)
 {
-    std::vector<std::vector<int> > ret_val(vert_list.size(),std::vector<int>(vert_list.size(),0));
+    plain_array<plain_array<int> > ret_val(vert_list.size(),plain_array<int>(vert_list.size(),0));
     for(auto&a:vert_list){
 	for(auto&s:a->new_neig_index){
 	    ret_val[a->new_index][s] = 1;
@@ -117,21 +148,25 @@ std::vector<std::vector<int>> get_matrix(const std::vector<vertex_sp>& vert_list
     return ret_val;
 }
 
-void main_algo(std::vector<std::vector<int>> matrix)
+void main_algo(plain_array<plain_array<int>> matrix)
 {
-    prints(matrix);
-    auto list_smej = create_list_smej(matrix);
-    auto vertex_array = create_vertex_array(list_smej);
-    cuthill_mckee_algo(vertex_array);
-    auto new_matr = get_matrix(vertex_array);
-    prints(new_matr);
+    prints(matrix); //вывод изначальной матрицы
+    auto list_smej = create_list_smej(matrix); //создаю из нее список смежностей
+    auto vertex_array = create_vertex_array(list_smej); // создаю из списка смежностей массив с вершинами
+    cuthill_mckee_algo(vertex_array); 
+    auto new_matr = get_matrix(vertex_array); 
+    prints(new_matr); // вывожу результат
 }
 
 
 
-int main()
+int main(int argc, char **argv)
 {
-    auto matr = fileIn<int>("input.txt");
+    if(argc != 2){
+	std::cerr<<" bad argc \n" << argc;
+	return 0;
+    }
+    auto matr = fileIn<int>(argv[1]);
     main_algo(matr);
     return 0;
 }

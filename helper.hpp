@@ -104,20 +104,3 @@ vector<vector<T>> fileIn( const char* filename )
    return arr;
 }
 
-
-inline std::vector<std::vector<int>> create_list_smej(const std::vector<std::vector<int>>& matr)
-{
-    std::vector<std::vector<int>> res;
-    for(int i=0; i < matr.size(); i++)
-    {
-	std::vector<int> temp;
-	for(int j =0; j < matr[i].size(); j++)
-	{
-	    if(matr[i][j] == 1){
-		temp.push_back(j);
-	    }
-	}
-	res.push_back(temp);
-    }
-    return res;
-}
