@@ -1,6 +1,7 @@
 * How it work:
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   1. $ python matrix-generator.py
   2. $ make -f Makefile.mk
   3. $ ./final_alg input.txt
@@ -17,3 +18,8 @@
 ** 
    $./final_alg
 >>>>>>> 79c9593 (add readme)
+=======
+  1. $ python matrix-generator.py
+  2. $ make -f Makefile.mk
+  3. $ ./final_alg
+>>>>>>> e9a9cf1 (add readme)
