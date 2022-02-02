@@ -7,6 +7,7 @@
 #include <queue>
 #include <map>
 #include "colors.hpp"
+#include <algorithm>
 
 using namespace std;
 
@@ -37,9 +38,18 @@ void prints(const std::vector<std::vector<T>>& cont)
 {
     for(int i =0; i < cont.size(); i++){
 	std::cout <<i<<": ";
+	int sum = 0;
+	for(auto &a:cont[i])
+	    sum +=a;
+
+	if(sum)
+	    std::cout <<"F " <<i<<": ";
+	else
+	    std::cout <<"S " <<i<<": ";
+	
 	for(auto &b :cont[i] ){
 	    if(b != 0)
-		std::cout<<BOLD(FRED("1 "));
+		std::cout<<BOLD(FBLU("1 "));
 	    else
 		std::cout<<"O ";
 	}
