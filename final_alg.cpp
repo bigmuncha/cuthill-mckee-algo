@@ -94,6 +94,7 @@ vertex_SPtr get_vertex_by_index(const int index,const plain_array<vertex_SPtr> v
     return nullptr;
 }
 
+// достать не помеченную вершину
 vertex_SPtr get_not_mark_vertex(const plain_array<vertex_SPtr>& vert_list,const std::set<int>& pomech){
 
     for(const auto&a: vert_list)
@@ -154,8 +155,9 @@ void cuthill_mckee_algo(plain_array<vertex_SPtr>& vert_list){
 		a->new_index = i++; // увеличиваем текущий индекс
 	    }
 	}
-	if(inqueue.empty()){
-	    auto temp = get_not_mark_vertex(vert_list, pomech);
+	// проверка при  несвязных подграфах в основном графе
+	if(inqueue.empty()){ 
+	    auto temp = get_not_mark_vertex(vert_list, pomech); // достаем первую попавшуюся не помеченную вершину
 	    if(temp){
 		pomech.insert(temp->index);
 		temp->new_index = i++;

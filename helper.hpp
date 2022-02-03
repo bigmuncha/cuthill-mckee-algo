@@ -8,6 +8,7 @@
 #include <map>
 #include "colors.hpp"
 #include <algorithm>
+#include <iomanip>
 
 using namespace std;
 
@@ -36,22 +37,22 @@ void printer(const T& container)
 template<typename T>
 void prints(const std::vector<std::vector<T>>& cont)
 {
+
     for(int i =0; i < cont.size(); i++){
-	std::cout <<i<<": ";
 	int sum = 0;
 	for(auto &a:cont[i])
 	    sum +=a;
-
+	std::cout.setf(std::ios::left);  //equivalent: cout << right;
 	if(sum)
-	    std::cout <<"F " <<i<<": ";
+	    std::cout <<i<<"F "<<std::setw(5)<< ": ";
 	else
-	    std::cout <<"S " <<i<<": ";
-	
+	    std::cout <<i<<"S " <<std::setw(5)<< ": ";
+
 	for(auto &b :cont[i] ){
 	    if(b != 0)
-		std::cout<<BOLD(FBLU("1 "));
+		std::cout<<std::setw(1) << BOLD(FBLU("1 "));
 	    else
-		std::cout<<"O ";
+		std::cout<<std::setw(1)<<"O ";
 	}
 	//     std::cout << b <<" ";
 	 std::cout <<'\n';
