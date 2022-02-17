@@ -40,17 +40,9 @@ void prints(const std::vector<std::vector<T>>& cont)
 
     for(int i =0; i < cont.size(); i++){
 	int sum = 0;
-	for(auto &a:cont[i])
-	    sum +=a;
-	std::cout.setf(std::ios::left);  //equivalent: cout << right;
-	if(sum)
-	    std::cout <<i<<"F "<<std::setw(5)<< ": ";
-	else
-	    std::cout <<i<<"S " <<std::setw(5)<< ": ";
-
 	for(auto &b :cont[i] ){
 	    if(b != 0)
-		std::cout<<std::setw(1) << BOLD(FBLU("1 "));
+		std::cout<<std::setw(1) << BOLD(FRED("1 "));
 	    else
 		std::cout<<std::setw(1)<<"O ";
 	}
@@ -115,3 +107,32 @@ vector<vector<T>> fileIn( const char* filename )
    return arr;
 }
 
+template <typename T>
+bool matrix_is_symmetrix( vector<vector<T>> matrix)
+{
+    for(int i=0;i < matrix.size(); i++)
+    {
+	for(int j =0; j < matrix[i].size(); j++)
+	{
+	    if(!(matrix[i][j] == matrix[j][i]))
+		return false;
+	}
+    }
+    return true;
+}
+
+template <typename T>
+int get_matrix_wide(vector<vector<T>> matrix)
+{
+    int d_size = matrix.size() / 2;
+    int result = 0;
+    for(int i =0; i < matrix.size(); i++){
+	for (int j = 0; j < matrix.size(); j++){
+	    if(matrix[i][j]!=0){
+		if(abs(j - i) > result)
+		    result = abs(j -i);
+	    }
+	}
+    }
+    return result;
+}
