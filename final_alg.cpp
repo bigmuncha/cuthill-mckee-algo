@@ -5,55 +5,8 @@
 #include "helper.hpp"
 #include <memory>
 #include <algorithm>
-#include <ranges>
 #include <assert.h>
 
-
-
-//создаю список смежностей из матрицы
-inline std::vector<std::vector<int>> create_list_smej(const std::vector<std::vector<int>>& matr)
-{
-    std::vector<std::vector<int>> res;
-    for(int i=0; i < matr.size(); i++)
-    {
-	std::vector<int> temp;
-	for(int j =0; j < matr[i].size(); j++)
-	{
-	    if(matr[i][j] == 1){
-		temp.push_back(j);
-	    }
-	}
-	res.push_back(temp);
-    }
-    return res;
-}
-
-
-
-class vertex;
-//typedef для удобной работы
-typedef std::shared_ptr<vertex> vertex_SPtr; //указатель на вершину
-
-template<class T>
-using plain_array = std::vector<T>;
-
-//структура для вершины
-struct vertex
-{
-    int degree; //степень
-    plain_array<vertex_SPtr> neigbords; //массив указателей на соседей
-    plain_array<int> neig_index; // массив индексов соседей
-    unsigned index; //начальный индекс
-    unsigned new_index; // индекс после работы алгоритма
-    plain_array<int> new_neig_index; // новый список соседей
-
-    vertex(int i, plain_array<vertex_SPtr> n,
-	   plain_array<int> l, unsigned inddex,
-	   unsigned new_index,plain_array<int> new_neig)
-	:degree(i),neigbords(n),neig_index(l),
-	 index(inddex),new_index(new_index),
-	 new_neig_index(new_neig) {}
-};
 
 
 //создаю список указателей на вершины из списка смежностей 
@@ -73,11 +26,12 @@ plain_array<vertex_SPtr> create_vertex_array (
 	map_vert.push_back(std::make_shared<vertex>(omar));
     }
     for(int i = 0; i< list_smej.size(); i++){
-	map_vert[i]->neigbords = [&map_vert]
-	    (plain_array<int> vect_ind) ->plain_array<vertex_SPtr>{
+	    auto func = [&map_vert]
+	    (plain_array<int> vect_ind) {
 		plain_array<vertex_SPtr> ret;
 		for(auto &a:vect_ind){ ret.push_back(map_vert[a]);}
-		return ret;}(map_vert[i]->neig_index);
+		return ret;};
+	    map_vert[i]->neigbords = func(map_vert[i]->neig_index);
     }
     return map_vert;
 }
@@ -112,7 +66,7 @@ vertex_SPtr get_not_mark_vertex(
     const std::set<int>& pomech){
 
     for(const auto&a: vert_list)
-	if(!pomech.contains(a->index))
+	if(pomech.find(a->index) == pomech.end())
 	    return a;
     return nullptr;
 }
@@ -161,7 +115,7 @@ void cuthill_mckee_algo(plain_array<vertex_SPtr>& vert_list){
         auto sort_vertex_list
 	    = sort_vert_list_by_degree(current_vert->neigbords);
         for(auto& a: sort_vertex_list){ //идем по всем соседям
-	    if(pomech.contains(a->index)){
+	    if(pomech.find(a->index) != pomech.end()){
 		//пропускаем помеченные
 		continue;
 	    }else{
@@ -233,8 +187,10 @@ void main_algo(plain_array<plain_array<int>> matrix)
     prints(new_matr); // вывожу результат
     print_max_lenght(vertex_array);
     matrix_is_symmetrix(matrix)? std::cout <<"Symetric" : std::cout <<"none"; std::cout<<'\n';
-    std::cout <<"Ширина ленты искомой матрицы: " <<get_matrix_wide(matrix) <<"\n";
-    std::cout <<"Ширина ленты преобразованной матрицы:" <<get_matrix_wide(new_matr) <<"\n";
+    auto [a,b,c] = get_another_matrix_wide(list_smej);
+    std::cout <<"Ширина ленты искомой матрицы: " <<a <<"Вершины, которые образуют ширину "<< b <<" " <<c <<"\n";
+    auto [d,e,f] = get_new_matrix_wide<int>(vertex_array);
+    std::cout <<"Ширина ленты преобразованной матрицы: " <<d <<" Вершины, которые образуют ширину "<< e <<" " <<f <<"\n";
 }
 
 int main(int argc, char **argv)

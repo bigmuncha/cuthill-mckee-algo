@@ -3,12 +3,13 @@
 #include <fstream>
 #include <string.h>
 #include <sstream>
-#include <span>
 #include <queue>
 #include <map>
 #include "colors.hpp"
 #include <algorithm>
 #include <iomanip>
+#include <memory>
+#include <tuple>
 
 using namespace std;
 
@@ -131,6 +132,27 @@ bool matrix_is_symmetrix( vector<vector<T>> matrix)
 }
 
 template <typename T>
+std::tuple<int,int,int> get_another_matrix_wide(const vector<vector<T>>& list_smej)
+{
+    unsigned int result = 0;
+    int first_index=0;
+    int last_vertex = 0;
+
+    for(int i =0; i < list_smej.size(); i++){
+	for(auto a: list_smej[i]){
+	    if(abs(i - a) > result){
+		result = abs(i - a);
+		first_index = i;
+		last_vertex = a;
+	    }
+	}
+    }
+
+    return std::make_tuple(result, first_index, last_vertex);
+
+}
+
+template <typename T>
 int get_matrix_wide(vector<vector<T>> matrix)
 {
     int d_size = matrix.size() / 2;
@@ -144,4 +166,71 @@ int get_matrix_wide(vector<vector<T>> matrix)
 	}
     }
     return result;
+}
+
+//создаю список смежностей из матрицы
+inline std::vector<std::vector<int>> create_list_smej(const std::vector<std::vector<int>>& matr)
+{
+    std::vector<std::vector<int>> res;
+    for(int i=0; i < matr.size(); i++)
+    {
+	std::vector<int> temp;
+	for(int j =0; j < matr[i].size(); j++)
+	{
+	    if(matr[i][j] == 1){
+		temp.push_back(j);
+	    }
+	}
+	res.push_back(temp);
+    }
+    return res;
+}
+
+
+
+class vertex;
+//typedef для удобной работы
+typedef std::shared_ptr<vertex> vertex_SPtr; //указатель на вершину
+
+template<class T>
+using plain_array = std::vector<T>;
+
+//структура для вершины
+struct vertex
+{
+    int degree; //степень
+    plain_array<vertex_SPtr> neigbords; //массив указателей на соседей
+    plain_array<int> neig_index; // массив индексов соседей
+    unsigned index; //начальный индекс
+    unsigned new_index; // индекс после работы алгоритма
+    plain_array<int> new_neig_index; // новый список соседей
+
+    vertex(int i, plain_array<vertex_SPtr> n,
+	   plain_array<int> l, unsigned inddex,
+	   unsigned new_index,plain_array<int> new_neig)
+	:degree(i),neigbords(n),neig_index(l),
+	 index(inddex),new_index(new_index),
+	 new_neig_index(new_neig) {}
+};
+
+
+template <typename T>
+std::tuple<int,int,int> get_new_matrix_wide(vector<vertex_SPtr>& list_smej)
+{
+    unsigned int result = 0;
+    int first_index=0;
+    int last_vertex = 0;
+
+    for(auto vert: list_smej)
+    {
+	int index = vert->new_index;
+	for(auto neig_ind:vert->new_neig_index){
+	    if(abs(index - neig_ind) > result){
+		result = abs(index - neig_ind);
+		first_index = index;
+		last_vertex = neig_ind;
+	    }
+	}
+    }
+    return std::make_tuple(result, first_index,last_vertex);
 }
